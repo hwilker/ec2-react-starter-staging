@@ -23,7 +23,7 @@ http {
 
     server {
         listen 80;
-        server_name 3.84.120.179;
+        server_name 54.89.147.47;
 
         root /usr/share/nginx/html;
         index index.html index.htm;

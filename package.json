@@ -1,5 +1,5 @@
 {
-  "name": "aws-ec2-reference",
+  "name": "ec2-react-starter",
   "version": "1.0.0",
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "/server/index.js",

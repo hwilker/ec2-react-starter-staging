@@ -1,9 +1,9 @@
 module.exports = {
   apps: [
     {
-      name: 'aws-ec2-github-production',
-      script: '/var/www/aws-ec2-github/server/index.js',
-      cwd: '/var/www/aws-ec2-github',
+      name: 'ec2-react-starter-production',
+      script: '/var/www/ec2-react-starter/server/index.js',
+      cwd: '/var/www/ec2-react-starter',
       watch: true,
       env: {
         PORT: 5100,
@@ -11,9 +11,9 @@ module.exports = {
       }
     },
     {
-      name: "aws-ec2-github-staging",
-      script: '/var/www/aws-ec2-github/server/index.js',
-      cwd: '/var/www/aws-ec2-github',
+      name: "ec2-react-started-staging",
+      script: '/var/www/ec2-react-starter/server/index.js',
+      cwd: '/var/www/ec2-react-starter',
       watch: true,
       env: {
         PORT: 5100,
