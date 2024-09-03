@@ -28,14 +28,14 @@ jobs:
       run: chmod +x deploy.sh
 
     - name: Create PEM file
-      run: echo "${{ secrets.PEM_FILE }}" > ~/.ssh/ec2-react-starter_ed25519.pem
+      run: echo "${{ secrets.PEM_FILE }}" > aws-ec2-01.pem
 
     - name: Set PEM file permissions
-      run: chmod 600 ~/.ssh/ec2-react-starter_ed25519.pem
+      run: chmod 600 aws-ec2-01.pem
 
     - name: Run deployment script
       env:
-        PEM_PATH: ~/.ssh/ec2-react-starter_ed25519.pem
+        PEM_PATH: ./aws-ec2-01.pem
         EC2_USER: ${{ secrets.EC2_USER }}
         EC2_HOST: ${{ secrets.EC2_HOST }}
       run: ./deploy.sh
