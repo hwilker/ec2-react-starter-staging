@@ -8,7 +8,7 @@ else
   echo "Running Locally"
   EC2_USER="ubuntu"
   EC2_HOST="100.26.190.61"
-  PEM_PATH="/mnt/c/Users/harry/.ssh/ec2-react-starter.pem"
+  PEM_PATH="/mnt/c/Users/harry/.ssh/ec2-react-starter_ed25519.pem"
   LOCAL_PATH="/mnt/e/Projects/ec2-react-starter"
 fi
 
@@ -18,16 +18,13 @@ REMOTE_DEPLOY_DIR="/var/www/ec2-react-starter"
 NGINX_HTML_DIR="/usr/share/nginx/html"
 ECOSYSTEM_FILE="ecosystem.config.js"
 PM2_APP_NAME="ec2-react-starter-production"
-EC2_HOST
+
 # Step 1: Rsync files to EC2 instance
 echo "Using PEM file: ${PEM_PATH}"EC2_HOST
 echo "Running rsync command..."
 rsync -avz --delete -e "ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no" \
   --exclude 'node_modules' --exclude '.git' --exclude '.idea' --exclude '.env' \
   "${LOCAL_PATH}/" "${EC2_USER}@${EC2_HOST}:${REMOTE_TEMP_DIR}/"
-
-  ssh -i /mnt/c/Users/harry/.ssh/ec2-react-starter.pem -o StrictHostKeyChecking=no ubuntu@ec2-100-26-190-61.compute-1.amazonaws.com
-
 
 # Step 2: Prepare deployment directory on EC2
 ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << EOF
