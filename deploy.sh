@@ -31,7 +31,20 @@ rsync -avz --delete -e "ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no" \
 
 # Step 2: Prepare deployment directory on EC2
 ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << EOF
-  export PATH=/home/ubuntu/.nvm/versions/node/v20.16.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ # export PATH=/home/ubuntu/.nvm/versions/node/v20.16
+ .0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Ensure nvm is properly loaded
+  export NVM_DIR="\$HOME/.nvm"
+  [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"
+
+  # Use the default Node.js version
+  nvm use default
+
+  # Verify the Node.js environment
+  echo "Node version: \$(node -v)"
+  echo "NPM version: \$(npm -v)"
+  echo "PM2 version: \$(pm2 -v)"
 
   echo "Preparing deployment directory..."
   sudo rm -rf ${REMOTE_DEPLOY_DIR}
@@ -47,7 +60,7 @@ ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << EOF
   cd client
   echo "installing client modules"
   npm install
-  ehco "building application"
+  echo "building application"
   npm run build
 
   echo "Copying built React app to Nginx directory..."
