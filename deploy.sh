@@ -7,7 +7,7 @@ if [ "$GITHUB_ACTIONS" = "true" ]; then
 else
   echo "Running Locally"
   EC2_USER="ubuntu"
-  EC2_HOST="100.26.190.61"
+  EC2_HOST="54.89.147.47"
   PEM_PATH="/mnt/c/Users/harry/.ssh/ec2-react-starter_ed25519.pem"
   LOCAL_PATH="/mnt/e/Projects/ec2-react-starter"
 fi
@@ -18,18 +18,15 @@ REMOTE_DEPLOY_DIR="/var/www/ec2-react-starter"
 NGINX_HTML_DIR="/usr/share/nginx/html"
 ECOSYSTEM_FILE="ecosystem.config.js"
 PM2_APP_NAME="ec2-react-starter-production"
-
 # Step 1: Rsync files to EC2 instance
-echo "Using PEM file: ${PEM_PATH}"EC2_HOST
+echo "Using PEM file: ${PEM_PATH}"
 echo "Running rsync command..."
-rsync -avz --delete -e "ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no" \
+rsync -avz --delete -e "ssh -i ${PEM_PATH}" \
   --exclude 'node_modules' --exclude '.git' --exclude '.idea' --exclude '.env' \
-  "${LOCAL_PATH}/" "${EC2_USER}@${EC2_HOST}:${REMOTE_TEMP_DIR}/"
+ --exclude '.instructions' "${LOCAL_PATH}" "${EC2_USER}@${EC2_HOST}:${REMOTE_TEMP_DIR}/"
 
 # Step 2: Prepare deployment directory on EC2
 ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << EOF
- # export PATH=/home/ubuntu/.nvm/versions/node/v20.16
- .0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Ensure nvm is properly loaded
   export NVM_DIR="\$HOME/.nvm"
