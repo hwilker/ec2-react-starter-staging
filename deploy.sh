@@ -22,12 +22,12 @@ PM2_APP_NAME="ec2-react-starter-production"
 echo "Using PEM file: ${PEM_PATH}"
 echo "Running rsync command..."
 
-rsync -avz --delete -e "ssh -i ${PEM_PATH} -o StrictHostKeyChecking=accept-new" \
+rsync -avz --delete -e "ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no" \
   --exclude 'node_modules' --exclude '.git' --exclude '.idea' --exclude '.env' \
   --exclude '.instructions' "${LOCAL_PATH}" "${EC2_USER}@${EC2_HOST}:${REMOTE_TEMP_DIR}/"
 
 # Step 2: Prepare deployment directory on EC2
-ssh -i ${PEM_PATH} -o -o StrictHostKeyChecking=accept-new ${EC2_USER}@${EC2_HOST} << EOF
+ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << EOF
 
 # Ensure nvm is properly loaded
   export NVM_DIR="\$HOME/.nvm"
