@@ -27,6 +27,9 @@ jobs:
     - name: Set executable permissions on deploy script
       run: chmod +x deploy.sh
 
+    - name: Create .ssh directory
+      run: mkdir -p ~./ssh
+
     - name: Create PEM file
       run: echo "${{ secrets.PEM_FILE }}" > ~/.ssh/ec2-react-starter_ed25519.pem
 
