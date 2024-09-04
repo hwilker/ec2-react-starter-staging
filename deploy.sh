@@ -22,13 +22,9 @@ PM2_APP_NAME="ec2-react-starter-production"
 echo "Using PEM file: ${PEM_PATH}"
 echo "Running rsync command..."
 
-#rsync -avz --delete -e "ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no" \
-#  --exclude 'node_modules' --exclude '.git' --exclude '.idea' --exclude '.env' \
-#  --exclude '.instructions' "${LOCAL_PATH}" "${EC2_USER}@${EC2_HOST}:${REMOTE_TEMP_DIR}/"
-
-rsync -avvz --delete -e "ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5" \
-  "${LOCAL_PATH}/some_small_directory_or_file" "${EC2_USER}@${EC2_HOST}:${REMOTE_TEMP_DIR}/"
-
+rsync -avz --delete -e "ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no" \
+  --exclude 'node_modules' --exclude '.git' --exclude '.idea' --exclude '.env' \
+  --exclude '.instructions' "${LOCAL_PATH}" "${EC2_USER}@${EC2_HOST}:${REMOTE_TEMP_DIR}/"
 
 # Step 2: Prepare deployment directory on EC2
 ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << EOF
