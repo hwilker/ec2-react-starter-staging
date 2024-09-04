@@ -4,8 +4,8 @@
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "/server/index.js",
   "engines": {
-    "node": ">=18.18.0 <=20.16.0",
-    "npm": "9.8.1"
+    "node": ">=18.18.0",
+    "npm": ">=9.8.1"
   },
   "scripts": {
     "start": "cross-env NODE_ENV=local nodemon server/index.js",
