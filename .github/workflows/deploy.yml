@@ -44,12 +44,12 @@ jobs:
     - name: Transfer server files to EC2
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r
-        ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/~
+        ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/~/
 
     - name: Transfer client build files to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r 
-        ./client/build ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/~
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r
+        ./client/build ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/~/
         exit 1
 
 
