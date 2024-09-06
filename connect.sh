@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variables
-HOST="ec2-54-89-147-47.compute-1.amazonaws.com"
+HOST="ec2-100-24-32-223.compute-1.amazonaws.com"
 USER="ubuntu"
 PEM_PATH="/mnt/c/Users/harry/.ssh/ec2-react-starter_ed25519.pem"
 

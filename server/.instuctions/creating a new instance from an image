@@ -1,0 +1,16 @@
+Connect dialog may incorrectly display the wrong user when showing the ssh command. Make
+sure to modify the command to change the user from root to ubuntu.
+
+IP: 100.26.194.152
+chmod 400 "ec2-react-starter_ed25519.pem"
+ssh -i "ec2-react-starter_ed25519.pem" ubuntu@ec2-100-26-194-152.compute-1.amazonaws.com
+
+rsync -avz --delete -e "ssh -i /mnt/c/Users/harry/.ssh/ec2-react-starter_ed25519.pem" \
+  --exclude 'node_modules' --exclude '.git' --exclude '.idea' --exclude '.env' \
+  --exclude '.instructions' "/mnt/e/Projects/ec2-react-starter/" "ubuntu@100.24.4.173:~/ec2-react-starter-temp/"
+
+You may need to start pm2 (I did it by typing 'pm2 -v' and then executing:
+
+pm2 start /var/www/ec2-react-starter/server/index.js --name ec2-react-starter-production
+
+

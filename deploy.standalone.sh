@@ -2,7 +2,7 @@
 
 # Variables
 EC2_USER="ubuntu"
-EC2_HOST="54.89.147.47"
+EC2_HOST="100.26.194.152"
 PEM_PATH="/mnt/c/Users/harry/.ssh/ec2-react-starter_ed25519.pem"
 LOCAL_PATH="/mnt/e/Projects/ec2-react-starter/"
 TEMP_DIR="ec2-react-starter-temp"
@@ -14,16 +14,16 @@ PM2_APP_NAME="ec2-react-starter-production"
 
 
 # Step 1: Rsync files to EC2 instance
-rsync -avz --delete -e "ssh -i ${PEM_PATH}" \
+rsync -avz --delete -e "ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no" \
   --exclude 'node_modules' --exclude '.git' --exclude '.idea' --exclude '.env' \
  --exclude '.instructions' "${LOCAL_PATH}" "${EC2_USER}@${EC2_HOST}:${REMOTE_TEMP_DIR}/"
 
-# Step 2: Prepare deployment directory on EC2cle
-ssh -i ${PEM_PATH} ${EC2_USER}@${EC2_HOST} << EOF
+# Step 2: Prepare deployment directory on EC2
+ssh -i ${PEM_PATH} -o StrictHostKeyChecking=no  ${EC2_USER}@${EC2_HOST} << EOF
   # Load nvm and the correct Node.js version
   export NVM_DIR="\$HOME/.nvm"
   [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh" # Load nvm
-  nvm use default # Use the default Node.js version
+  nvm use stable
 
   # Step 3: Verify that the correct Node.js version is being used
   echo "Node version: \$(node -v)"
@@ -41,7 +41,7 @@ ssh -i ${PEM_PATH} ${EC2_USER}@${EC2_HOST} << EOF
   cd ${REMOTE_DEPLOY_DIR}
   npm install
   cd client
-  npm install
+  npm ci
   npm run build
 
   # Step 7: Copy built React app to Nginx directory

@@ -7,7 +7,7 @@ if [ "$GITHUB_ACTIONS" = "true" ]; then
 else
   echo "Running Locally"
   EC2_USER="ubuntu"
-  EC2_HOST="54.89.147.47"
+  EC2_HOST="100.24.4.173"
   PEM_PATH="/mnt/c/Users/harry/.ssh/ec2-react-starter_ed25519.pem"
   LOCAL_PATH="/mnt/e/Projects/ec2-react-starter"
 fi

@@ -6,39 +6,63 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Node.js
+    - name: Set up Node.js for server
       uses: actions/setup-node@v3
       with:
         node-version: '20'
 
-    - name: Install dos2unix
-      run: sudo apt-get install dos2unix
+    - name: Install server dependencies
+      working-directory: ./server
+      run: npm ci
 
-    - name: Convert deploy script to Unix format
-      run: dos2unix deploy.sh
+    - name: Set up Node.js for client
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
 
-    - name: Set executable permissions on deploy script
-      run: chmod +x deploy.sh
+    - name: Install client dependencies
+      working-directory: ./client
+      run: npm ci
 
-    - name: Create .ssh directory
-      run: mkdir -p ~/.ssh
+    - name: Build client app
+      working-directory: ./client
+      run: npm run build
 
-    - name: Create PEM file
-      run: echo "${{ secrets.PEM_FILE }}" > ~/.ssh/ec2-react-starter_ed25519.pem
+    - name: Add SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/${{ secrets.PEM_FILE_NAME }}
+        chmod 600 ~/.ssh/${{ secrets.PEM_FILE_NAME }}
 
-    - name: Set PEM file permissions
-      run: chmod 600 ~/.ssh/ec2-react-starter_ed25519.pem
+    - name: Transfer server files to EC2
+      run: |
+        scp -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/deploy/server
 
-    - name: Run deployment script
-      env:
-        PEM_PATH: ~/.ssh/ec2-react-starter_ed25519.pem
-        EC2_USER: ${{ secrets.EC2_USER }}
-        EC2_HOST: ${{ secrets.EC2_HOST }}
-      run: ./deploy.sh
+    - name: Transfer client build files to EC2
+      run: |
+        scp -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./client/build ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/deploy/client
+
+    - name: Deploy to EC2
+      run: |
+        ssh -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          # Move server files to the appropriate directory
+          sudo mkdir -p /var/www/server
+          sudo mv /home/${{ secrets.EC2_USER }}/deploy/server/* /var/www/server/
+
+          # Move client build files to the appropriate directory
+          sudo mkdir -p /var/www/html
+          sudo mv /home/${{ secrets.EC2_USER }}/deploy/client/* /var/www/html/
+
+          # Restart the PM2 process for the server
+          pm2 restart /var/www/server/index.js --name my-server
+
+          # Restart Nginx to serve the new build
+          sudo systemctl restart nginx
+        EOF
