@@ -45,17 +45,10 @@ jobs:
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/deploy/server
 
-
-
-    - name: Transfer client build files to EC2
-      run: |
-        scp  -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r
-        ./client/build ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/deploy/client
-
-
     - name: Transfer client build files to EC2
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./client/build ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/deploy/client
+        exit
 
 
     - name: Deploy to EC2
@@ -68,7 +61,7 @@ jobs:
 
           # Move client build files to the appropriate directory
           sudo mkdir -p /var/www/html
-          sudo mv /home/${{ secrets.EC2_USER }}/deploy/client/* /var/www/html/
+          sudo mv /home/${{ secrets.EC2_USER }}/deploy/client/* /usr/share/nginx/html
 
           # Restart the PM2 process for the server
           pm2 restart /var/www/server/index.js --name my-server
