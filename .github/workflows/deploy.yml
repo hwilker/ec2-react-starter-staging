@@ -18,7 +18,8 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install root and server dependencies
+    - name: Install server dependencies
+      working-directory: ./
       run: npm ci
 
     - name: Install client dependencies
@@ -35,40 +36,34 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/${{ secrets.PEM_FILE_NAME }}
         chmod 600 ~/.ssh/${{ secrets.PEM_FILE_NAME }}
 
-    - name: Transfer server files to EC2
+    - name: Transfer app to EC2 (excluding unnecessary files)
       run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
+        rsync -avz --delete \
+          --exclude 'client/node_modules' \
+          --exclude '.git' \
+          --exclude '.idea' \
+          --exclude '.env' \
+          --exclude '.instructions' \
+          -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }}" \
+          ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/app/
+          exit 1
 
-    - name: Transfer server node_modules to EC2
-      run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./node_modules ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/server/
 
-    - name: Transfer client node_modules to EC2
-      run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./client/node_modules ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/client/
-
-    - name: Transfer package.json to EC2
-      run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ./package.json ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
-
-    - name: Transfer client build files to EC2
-      run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./client/build ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
-
-    - name: Deploy to EC2
+    - name: Move build folder to ~/build
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-          # Move server files to the appropriate directory
-          sudo mkdir -p /var/www/server
-          sudo mv /home/${{ secrets.EC2_USER }}/server/* /var/www/server/
+          sudo mkdir -p /home/ubuntu/build
+          sudo mv /home/ubuntu/app/client/build/* /home/ubuntu/build/
+        EOF
 
-          # Move client build files to the appropriate directory
-          sudo mkdir -p /var/www/html
-          sudo mv /home/${{ secrets.EC2_USER }}/build/* /usr/share/nginx/html
+    - name: Deploy server with  PM2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          pm2 restart /home/ubuntu/app/server/index.js --name my-server
+        EOF
 
-          # Restart the PM2 process for the server
-          pm2 restart /var/www/server/index.js --name my-server
-
-          # Restart Nginx to serve the new build
+    - name: Restart Nginx to serve the new build
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           sudo systemctl restart nginx
         EOF
