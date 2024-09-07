@@ -41,6 +41,9 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/${{ secrets.PEM_FILE_NAME }}
         chmod 600 ~/.ssh/${{ secrets.PEM_FILE_NAME }}
 
+    - name: Debug: List files before transfer
+      run: ls -R
+
     - name: Transfer server files to EC2
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
@@ -60,7 +63,10 @@ jobs:
     - name: Transfer client build files to EC2
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./client/build ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
-        exit 1
+
+    - name: Debug: Check files on EC2 after transfer
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "ls -R /home/ubuntu"
 
     - name: Deploy to EC2
       run: |
