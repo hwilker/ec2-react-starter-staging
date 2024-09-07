@@ -41,6 +41,9 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/${{ secrets.PEM_FILE_NAME }}
         chmod 600 ~/.ssh/${{ secrets.PEM_FILE_NAME }}
 
+    - name: Verify node_modules exists for server
+      run: ls -la ./server/node_modules
+
     - name: Transfer server files to EC2
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
@@ -72,4 +75,9 @@ jobs:
           sudo mkdir -p /var/www/html
           sudo mv /home/${{ secrets.EC2_USER }}/build/* /usr/share/nginx/html
 
+          # Restart the PM2 process for the server
+          pm2 restart /var/www/server/index.js --name my-server
 
+          # Restart Nginx to serve the new build
+          sudo systemctl restart nginx
+        EOF
