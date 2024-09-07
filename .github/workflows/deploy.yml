@@ -45,27 +45,33 @@ jobs:
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
 
+    - name: Transfer server node_modules to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server/node_modules ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/server/
+
+    - name: Transfer client node_modules to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./client/node_modules ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/client/
+
     - name: Transfer package.json to EC2
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ./package.json ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
-        
+
     - name: Transfer client build files to EC2
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./client/build ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
         exit 1
 
-
     - name: Deploy to EC2
       run: |
-        ssh  -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{
-        secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           # Move server files to the appropriate directory
           sudo mkdir -p /var/www/server
-          sudo mv /home/${{ secrets.EC2_USER }}/deploy/server/* /var/www/server/
+          sudo mv /home/${{ secrets.EC2_USER }}/server/* /var/www/server/
 
           # Move client build files to the appropriate directory
           sudo mkdir -p /var/www/html
-          sudo mv /home/${{ secrets.EC2_USER }}/deploy/client/* /usr/share/nginx/html
+          sudo mv /home/${{ secrets.EC2_USER }}/build/* /usr/share/nginx/html
 
           # Restart the PM2 process for the server
           pm2 restart /var/www/server/index.js --name my-server
