@@ -18,7 +18,7 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install server and root dependencies
+    - name: Install root and server dependencies
       run: npm ci
 
     - name: Install client dependencies
@@ -37,7 +37,7 @@ jobs:
 
     - name: Transfer server files to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/server/
 
     - name: Transfer server node_modules to EC2
       run: |
@@ -53,7 +53,7 @@ jobs:
 
     - name: Transfer client build files to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./client/build ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./client/build/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/build/
 
     - name: Deploy to EC2
       run: |
