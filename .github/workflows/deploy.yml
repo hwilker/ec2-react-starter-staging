@@ -13,19 +13,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Node.js for server
+    - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20'
 
-    - name: Install server dependencies
-      working-directory: ./server
+    - name: Install server and root dependencies
       run: npm ci
-
-    - name: Set up Node.js for client
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
 
     - name: Install client dependencies
       working-directory: ./client
@@ -41,16 +35,13 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/${{ secrets.PEM_FILE_NAME }}
         chmod 600 ~/.ssh/${{ secrets.PEM_FILE_NAME }}
 
-    - name: Verify node_modules exists for server
-      run: ls -la ./server/node_modules
-
     - name: Transfer server files to EC2
       run: |
         scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/
 
     - name: Transfer server node_modules to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./server/node_modules ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/server/
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} -r ./node_modules ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/server/
 
     - name: Transfer client node_modules to EC2
       run: |
