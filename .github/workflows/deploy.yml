@@ -46,12 +46,12 @@ jobs:
           --exclude '.instructions' \
           -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }}" \
           ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/app/
-          exit 1
-
 
     - name: Move build folder to ~/build
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}
+        exit 1
+        << 'EOF'
           sudo mkdir -p /home/ubuntu/build
           sudo mv /home/ubuntu/app/client/build/* /home/ubuntu/build/
         EOF
