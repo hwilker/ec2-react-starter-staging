@@ -47,23 +47,9 @@ jobs:
           -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }}" \
           ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/app/
 
-    - name: Move build folder to ~/build
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}
-        exit 1
-        << 'EOF'
-          sudo mkdir -p /home/ubuntu/build
-          sudo mv /home/ubuntu/app/client/build/* /home/ubuntu/build/
-        EOF
-
-    - name: Deploy server with  PM2
+    - name: Deploy and restart services on EC2
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           pm2 restart /home/ubuntu/app/server/index.js --name my-server
-        EOF
-
-    - name: Restart Nginx to serve the new build
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           sudo systemctl restart nginx
         EOF
