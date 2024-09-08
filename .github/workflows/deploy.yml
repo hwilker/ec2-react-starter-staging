@@ -5,6 +5,14 @@ on:
     branches:
       - main
 
+env:
+  APP_NAME: ec2-react-starter
+  BASE_DIR: /var/www
+  NGINX_HTML_DIR: /usr/share/nginx/html
+  ECOSYSTEM_FILE: ecosystem.config.js
+  STAGE: production
+
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -12,6 +20,17 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Set environment variable
+      run: |
+        echo "REMOTE_DEPLOY_DIR=${BASE_DIR}/${APP_NAME}" >> $GITHUB_ENV
+        echo "PM2_APP_NAME=${APP_NAME}-${STAGE}" >> $GITHUB_ENV
+        echo "APP_NAME ${APP_NAME}"
+        echo "NGINX_HTML_DIR ${NGINX_HTML_DIR}"
+        echo "ECOSYSTEM_FILE ${ECOSYSTEM_FILE}"
+        echo "STAGE  ${STAGE}"
+        echo "REMOTE_DEPLOY_DIR ${REMOTE_DEPLOY_DIR}"
+        echo "PM2_APP_NAME ${PM2_APP_NAME}"
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
