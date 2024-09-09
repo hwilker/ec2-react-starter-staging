@@ -13,7 +13,6 @@ env:
   ECOSYSTEM_FILE: ecosystem.config.js
   STAGE: production
 
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -27,7 +26,7 @@ jobs:
         echo "REMOTE_DEPLOY_DIR=${BASE_DIR}/${APP_NAME}" >> $GITHUB_ENV
         echo "PM2_APP_NAME=${APP_NAME}-${STAGE}" >> $GITHUB_ENV
 
-    - name: Print environment varibles
+    - name: Print environment variables
       run: |
         echo "APP_NAME ${APP_NAME}"
         echo "NGINX_HTML_DIR ${NGINX_HTML_DIR}"
@@ -70,49 +69,10 @@ jobs:
           -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }}" \
           ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/app/
 
-    - name: Deploy and restart services on EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-        # Source the nvm script to ensure pm2 is in PATH
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-
-
-
-        # Prepare the deployment directory
-        sudo rm -rf ${{ env.REMOTE_DEPLOY_DIR }}
-        sudo mkdir -p ${{ env.REMOTE_DEPLOY_DIR }}
-        sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} ${{ env.REMOTE_DEPLOY_DIR }}
-        sudo mv ${{ env.REMOTE_TEMP_DIR }}/* ${{ env.REMOTE_DEPLOY_DIR }}/
-        sudo rm -rf ${{ env.REMOTE_TEMP_DIR }}
-
-        # Copy built React app to Nginx directory
-        sudo cp -r ${{env.REMOTE_DEPLOY_DIR}}/client/build/* ${{env.NGINX_HTML_DIR}}/
-
-        # Set permissions for Nginx and ecosystem.config.js
-        sudo usermod -aG www-data ${{ secrets.EC2_USER }}
-        sudo chown -R www-data:www-data ${{env.NGINX_HTML_DIR}}
-        sudo chmod 640 ${REMOTE_DEPLOY_DIR}/${{env.ECOSYSTEM_FILE}}
-        sudo chown www-data:www-data ${{env.REMOTE_DEPLOY_DIR}}/${{env.ECOSYSTEM_FILE}}
-        sudo chmod 750 ${{env.REMOTE_DEPLOY_DIR}}/
-
-        # Start Nginx and deploy the Node.js app with PM2
-        # Stop the PM2 process if it is running
-        if pm2 stop ${{ env.PM2_APP_NAME }}; then
-        echo "PM2 process stopped"
-        fi
-
-        # Delete the PM2 process if it exists
-        if pm2 delete ${{ env.PM2_APP_NAME }}; then
-          echo "PM2 process deleted"
-        fi
-
-        # Clear the PM2 dump
-        pm2 cleardump
-
-        # Start the PM2 process with the ecosystem file and save the process list
-        pm2 start ${{ env.REMOTE_DEPLOY_DIR }}/${{ env.ECOSYSTEM_FILE }} --env production --only ${{ env.PM2_APP_NAME }}
-        pm2 save
-
-        EOF
+#    - name: Transfer deployment script to EC2
+#      run: |
+#        scp -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} deploy_to_ec2.sh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/deploy.sh
+#
+#    - name: Deploy and restart services on EC2
+#      run: |
+#        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash /home/ubuntu/deploy_to_ec2.sh"
