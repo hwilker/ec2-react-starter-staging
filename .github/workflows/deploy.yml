@@ -73,9 +73,12 @@ jobs:
     - name: Deploy and restart services on EC2
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        # Source the nvm script to ensure pm2 is in PATH
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
-        # Source the user's profile to ensure pm2 is in PATH
-        source ~/.profile || source ~/.bashrc || true
+
 
         # Prepare the deployment directory
         sudo rm -rf ${{ env.REMOTE_DEPLOY_DIR }}
