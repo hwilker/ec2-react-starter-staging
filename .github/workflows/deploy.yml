@@ -80,7 +80,15 @@ jobs:
         sudo mv ${{ env.REMOTE_TEMP_DIR }}/* ${{ env.REMOTE_DEPLOY_DIR }}/
         sudo rm -rf ${{ env.REMOTE_TEMP_DIR }}
 
-        exit 1
+        # Copy built React app to Nginx directory
+        sudo cp -r ${{env.REMOTE_DEPLOY_DIR}}/client/build/* ${{env.NGINX_HTML_DIR}}/
+
+        # Set permissions for Nginx and ecosystem.config.js
+        sudo usermod -aG www-data ${{ secrets.EC2_USER }}
+        sudo chown -R www-data:www-data ${{env.NGINX_HTML_DIR}}
+        sudo chmod 640 ${REMOTE_DEPLOY_DIR}/${{env.ECOSYSTEM_FILE}}
+        sudo chown www-data:www-data ${{env.REMOTE_DEPLOY_DIR}}/${{env.ECOSYSTEM_FILE}}
+        sudo chmod 750 ${{env.REMOTE_DEPLOY_DIR}}/
 
 
           pm2 restart /home/ubuntu/app/server/index.js --name my-server
