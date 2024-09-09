@@ -73,6 +73,10 @@ jobs:
     - name: Deploy and restart services on EC2
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+
+        # Source the user's profile to ensure pm2 is in PATH
+        source ~/.profile || source ~/.bashrc || true
+
         # Prepare the deployment directory
         sudo rm -rf ${{ env.REMOTE_DEPLOY_DIR }}
         sudo mkdir -p ${{ env.REMOTE_DEPLOY_DIR }}
@@ -91,13 +95,21 @@ jobs:
         sudo chmod 750 ${{env.REMOTE_DEPLOY_DIR}}/
 
         # Start Nginx and deploy the Node.js app with PM2
-        sudo systemctl start nginx
-        pm2 stop ${{env.PM2_APP_NAME}} || true
-        pm2 delete ${{env.PM2_APP_NAME}} || true
+        # Stop the PM2 process if it is running
+        if pm2 stop ${{ env.PM2_APP_NAME }}; then
+        echo "PM2 process stopped"
+        fi
+
+        # Delete the PM2 process if it exists
+        if pm2 delete ${{ env.PM2_APP_NAME }}; then
+          echo "PM2 process deleted"
+        fi
+
+        # Clear the PM2 dump
         pm2 cleardump
-        pm2 start ${REMOTE_DEPLOY_DIR}/${ECOSYSTEM_FILE} --env production --only ${PM2_APP_NAME}
+
+        # Start the PM2 process with the ecosystem file and save the process list
+        pm2 start ${{ env.REMOTE_DEPLOY_DIR }}/${{ env.ECOSYSTEM_FILE }} --env production --only ${{ env.PM2_APP_NAME }}
         pm2 save
 
-          pm2 restart /home/ubuntu/app/server/index.js --name my-server
-          sudo systemctl restart nginx
         EOF
