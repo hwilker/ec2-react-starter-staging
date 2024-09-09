@@ -9,6 +9,7 @@ env:
   APP_NAME: ec2-react-starter
   BASE_DIR: /var/www
   NGINX_HTML_DIR: /usr/share/nginx/html
+  REMOTE_TEMP_DIR: ~/app
   ECOSYSTEM_FILE: ecosystem.config.js
   STAGE: production
 
@@ -72,6 +73,15 @@ jobs:
     - name: Deploy and restart services on EC2
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        # Prepare the deployment directory
+        sudo rm -rf ${REMOTE-DEPLOY-DIR}
+        sudo mkdir -p ${REMOTE_DEPLOY_DIR}
+        sudo chown -R ${{secrets.EC2_USER}}:${{secrets.EC2_USER}} ${REMOTE_DEPLOY_DIR}
+        sudo mv ${REMOTE_TEMP_DIR}/* ${REMOTE_DEPLOY_DIR}/
+        sudo rm -rf ${REMOTE_TEMP_DIR}
+        exit 1
+
+
           pm2 restart /home/ubuntu/app/server/index.js --name my-server
           sudo systemctl restart nginx
         EOF
