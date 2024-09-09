@@ -74,11 +74,12 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
         # Prepare the deployment directory
-        sudo rm -rf ${REMOTE-DEPLOY-DIR}
-        sudo mkdir -p ${REMOTE_DEPLOY_DIR}
-        sudo chown -R ${{secrets.EC2_USER}}:${{secrets.EC2_USER}} ${REMOTE_DEPLOY_DIR}
-        sudo mv ${REMOTE_TEMP_DIR}/* ${REMOTE_DEPLOY_DIR}/
-        sudo rm -rf ${REMOTE_TEMP_DIR}
+        sudo rm -rf ${{ env.REMOTE_DEPLOY_DIR }}
+        sudo mkdir -p ${{ env.REMOTE_DEPLOY_DIR }}
+        sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} ${{ env.REMOTE_DEPLOY_DIR }}
+        sudo mv ${{ env.REMOTE_TEMP_DIR }}/* ${{ env.REMOTE_DEPLOY_DIR }}/
+        sudo rm -rf ${{ env.REMOTE_TEMP_DIR }}
+
         exit 1
 
 
