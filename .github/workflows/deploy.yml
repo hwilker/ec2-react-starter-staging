@@ -74,7 +74,7 @@ jobs:
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{
         secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /var/www/${{ env.APP_NAME }}/deploy.sh"
 
-    - name: Deploy and restart services on EC2
+    - name: Test SSH connection and script execution
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash /var/www/${{ env.APP_NAME }}/deploy.sh"
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo 'SSH connection successful'; bash /var/www/ec2-react-starter/deploy.sh"
 
