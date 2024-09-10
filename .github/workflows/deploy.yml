@@ -72,8 +72,7 @@ jobs:
     - name: Set execute permissions on deploy.sh
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{
-        secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /var/www/${APP_NAME}/deploy
-        .sh"
+        secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /var/www/${APP_NAME}/deploy.sh"
 
     - name: Deploy and restart services on EC2
       run: |
