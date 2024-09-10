@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x  # Enable debugging output
+
 # Define variables (these can be modified if running standalone for debugging)
 APP_NAME="ec2-react-starter"
 BASE_DIR="/var/www"
@@ -13,7 +15,6 @@ EC2_USER="ubuntu" # Replace with the correct user if needed
 
 # Make deploy.sh executable
 chmod +x $HOME/app/deploy.sh
-exit 1
 
 # Source the nvm script to ensure pm2 is in PATH
 export NVM_DIR="$HOME/.nvm"
