@@ -4,12 +4,16 @@
 APP_NAME="ec2-react-starter"
 BASE_DIR="/var/www"
 NGINX_HTML_DIR="/usr/share/nginx/html"
-REMOTE_TEMP_DIR="~/app"
+REMOTE_TEMP_DIR="$HOME/app"
 ECOSYSTEM_FILE="ecosystem.config.js"
 STAGE="production"
 REMOTE_DEPLOY_DIR="${BASE_DIR}/${APP_NAME}"
 PM2_APP_NAME="${APP_NAME}-${STAGE}"
 EC2_USER="ubuntu" # Replace with the correct user if needed
+
+# Make deploy.sh executable
+chmod +x $HOME/app/deploy.sh
+exit 1
 
 # Source the nvm script to ensure pm2 is in PATH
 export NVM_DIR="$HOME/.nvm"
