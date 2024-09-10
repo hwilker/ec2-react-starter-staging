@@ -46,4 +46,4 @@ pm2 save
 
 # Restart Nginx to serve the latest React build
 sudo systemctl restart nginx
-echo "deployment comlete"
+
