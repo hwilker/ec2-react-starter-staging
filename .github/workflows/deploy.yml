@@ -74,7 +74,9 @@ jobs:
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{
         secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "chmod +x /home/ubuntu/app/deploy.sh"
 
-    - name: Test SSH connection and script execution
+    - name: Deploy and restart services on EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo 'SSH connection successful'; bash /home/ubuntu/app/deploy.sh"
+#        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo 'SSH connection successful'; bash /home/ubuntu/app/deploy.sh"
+
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/${{ secrets.PEM_FILE_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash /home/ubuntu/app/deploy.sh" 2>&1 | tee deploy_output.log
 
