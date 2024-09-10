@@ -34,14 +34,8 @@ sudo chown www-data:www-data "$REMOTE_DEPLOY_DIR/$ECOSYSTEM_FILE"
 sudo chmod 750 "$REMOTE_DEPLOY_DIR"
 
 # Start Nginx and deploy the Node.js app with PM2
-if pm2 stop "$PM2_APP_NAME"; then
-    echo "PM2 process stopped"
-fi
-
-if pm2 delete "$PM2_APP_NAME"; then
-    echo "PM2 process deleted"
-fi
-
+pm2 stop "$PM2_APP_NAME" || true
+pm2 delete "$PM2_APP_NAME" || true
 pm2 cleardump
 pm2 start "$REMOTE_DEPLOY_DIR/$ECOSYSTEM_FILE" --env production --only "$PM2_APP_NAME"
 pm2 save
