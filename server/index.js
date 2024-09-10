@@ -39,7 +39,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/api/hello', (req, res) => {
-  res.json({msg: 'Hello Github5 World!!'})
+  res.json({msg: 'Hello Github6 World!!'})
 })
 
 app.get('/api/goodbye', (req, res) => {

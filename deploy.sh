@@ -44,6 +44,7 @@ pm2 delete "$PM2_APP_NAME" || true
 pm2 cleardump
 pm2 start "$REMOTE_DEPLOY_DIR/$ECOSYSTEM_FILE" --env production --only "$PM2_APP_NAME"
 pm2 save
+echo 'deploy successful'
 
 # Restart Nginx to serve the latest React build
 sudo systemctl restart nginx
