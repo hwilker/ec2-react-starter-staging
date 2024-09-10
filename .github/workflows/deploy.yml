@@ -6,7 +6,6 @@ on:
       - main
 
 env:
-  APP_NAME: ec2-react-starter
   BASE_DIR: /var/www
   NGINX_HTML_DIR: /usr/share/nginx/html
   REMOTE_TEMP_DIR: ~/app
