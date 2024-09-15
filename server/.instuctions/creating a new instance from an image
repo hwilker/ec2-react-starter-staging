@@ -1,5 +1,5 @@
-Connect dialog may incorrectly display the wrong user when showing the ssh command. Make
-sure to modify the command to change the user from root to ubuntu.
+Connect dialog on AWS may display the wrong user when showing the ssh command.
+ Make sure to modify the command to change the user from root to ubuntu.
 
 IP: 100.26.194.152
 chmod 400 "ec2-react-starter_ed25519.pem"

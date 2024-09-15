@@ -8,7 +8,7 @@ rsync -avz --delete -e "ssh -i /mnt/c/Users/harry/.ssh/ec2-react-starter_ed25519
   --exclude 'node_modules' --exclude '.git' --exclude '.idea' --exclude '.env' \
   --exclude '.instructions' "/mnt/e/Projects/ec2-react-starter/" "ubuntu@54.89.147.47:~/ec2-react-starter-temp/"
 
-# Step 2: Prepare deployment directory on EC2cle
+# Step 2: Prepare deployment directory on EC2
 ssh -i /mnt/c/Users/harry/.ssh/ec2-react-starter_ed25519.pem ubuntu@54.89.147.47 << EOF
 
 # from ec2 instance
