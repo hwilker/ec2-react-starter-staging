@@ -10,7 +10,7 @@ env:
   NGINX_HTML_DIR: /usr/share/nginx/html
   REMOTE_TEMP_DIR: ~/app
   ECOSYSTEM_FILE: ecosystem.config.js
-  STAGE: production
+  STAGE: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
   APP_NAME: ec2-react-starter
 
 jobs:
