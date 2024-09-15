@@ -39,7 +39,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/api/hello', (req, res) => {
-  res.json({msg: 'Hello Certificate World!!'})
+  res.json({msg: 'Hello chmod World!!'})
 })
 
 app.get('/api/goodbye', (req, res) => {

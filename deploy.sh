@@ -13,9 +13,6 @@ REMOTE_DEPLOY_DIR="${BASE_DIR}/${APP_NAME}"
 PM2_APP_NAME="${APP_NAME}-${STAGE}"
 EC2_USER="ubuntu" # Replace with the correct user if needed
 
-# Make deploy.sh executable
-chmod +x $HOME/app/deploy.sh
-
 # Source the nvm script to ensure pm2 is in PATH
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
