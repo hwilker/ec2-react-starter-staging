@@ -12,3 +12,11 @@ In the new repo go to Settings/Secrets and Variables/Actions
     EC2_USER: ubuntu
     PEM_FILE_NAME: ec2-react-starter_ed25519.pem or new key
     SSH_PRIVATE_KEY: right click on key in .ssh folder and select open with sublime test
+
+SSH into server and:
+    cd /etc/nginx
+    sudo nano nginx.conf
+    delete the existing text and reploace it with the contents of nginx.conf.txt in the
+    local instructions folder.
+    modify the server address to that of the new instance
+    save: ctrl-O, confirm, ctrl-x
