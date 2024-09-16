@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Define variables
-# IP: 100.26.194.152
-# ALT FORM IP: 100-26-194-152
-HOST="ec2-100-26-194-152.compute-1.amazonaws.com"
+# IP: 54.165.40.108
+# ALT FORM IP: 54-165-40-108
+HOST="ec2-54-165-40-108.compute-1.amazonaws.com"
 USER="ubuntu"
 PEM_PATH="/mnt/c/Users/harry/.ssh/ec2-react-starter_ed25519.pem"
 
@@ -13,4 +13,3 @@ echo "Executing command: $SSH_COMMAND"
 
 # Execute the SSH command
 $SSH_COMMAND
-

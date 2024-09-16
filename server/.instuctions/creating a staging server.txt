@@ -1,0 +1,14 @@
+Provision a new ec2 image 'ec2-react-starter-staging' using 'ec2-react-starter' image.
+
+Modify connect-staging.sh to reflect new ip.
+
+Create staging repo, locally and remote.
+    git branch -r staging
+    create new repo on github.
+    git remote add staging https://github.com/hwilker/ec2-react-starter-staging.git
+
+In the new repo go to Settings/Secrets and Variables/Actions
+    EC2_HOST: <ip address>
+    EC2_USER: ubuntu
+    PEM_FILE_NAME: ec2-react-starter_ed25519.pem or new key
+    SSH_PRIVATE_KEY: right click on key in .ssh folder and select open with sublime test
